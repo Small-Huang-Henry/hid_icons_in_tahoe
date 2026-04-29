@@ -1,5 +1,10 @@
 # macOS 26 (Tahoe) 隐藏 Apps / Launchpad 图标方案
 
+适配 macOS 26.4.1，对于其他系统没有测试过，不定期更新
+
+不用安装额外软件，更新于04/29/2026
+
+可以正常使用，但是在安装/删除软件后会掉（应该是因为App.app重新加载索引了）
 ## 背景
 
 在 macOS 26 (Tahoe) 中：
@@ -17,48 +22,28 @@
 lsregister -u <app_path>
 
 ## 单个 App 隐藏
-
-/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -u "/Applications/Utilities/LogiPluginService.app"
-
+```
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -u /Applications/Utilities/LogiPluginService.app
+```
 ## Bundle 内嵌 App
-
-lsregister -u "/Applications/Utilities/XXX.bundle/YYY.app"
-
+```
+/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister -u /Applications/Utilities/Logi Options+ Driver Installer.bundle/Logi Options+ Driver Installer.app
+```
 ## 恢复
-
-lsregister -f "<app_path>"
-
-## 批量隐藏脚本
-
-路径：
-~/.local/bin/hide-hidden-apps.sh
-
-内容：
-
-#!/bin/zsh
-LSREGISTER="/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister"
-LIST="$HOME/Library/Application Support/HiddenAppsManager/hidden_apps.txt"
-
-[ -f "$LIST" ] || exit 0
-
-while IFS= read -r app; do
-  [ -z "$app" ] && continue
-  [ -d "$app" ] && "$LSREGISTER" -u "$app" 2>/dev/null
-done < "$LIST"
-
-权限：
-chmod +x ~/.local/bin/hide-hidden-apps.sh
-
-## 列表文件
-
-~/Library/Application Support/HiddenAppsManager/hidden_apps.txt
-
-## Karabiner 自动触发
-
-Option + Space：
-隐藏 → 打开 Apps → 清空搜索
+```
+lsregister -f <app_path>
+```
+## 效果
+<img src="imgs/img.png">
+可以看到，logi Option+后续2个软件已经被隐藏了，但是搜索依然有用
 
 ## 总结
 
-macOS 26 无法直接隐藏单个 App  
-唯一方法：lsregister -u + 自动触发
+macOS 26.4.1 无法直接隐藏单个 App  
+唯一方法：lsregister -u
+
+## 后续
+后续可以考虑 使用 自动触发或是一些更加快捷、自动的方式实现这个功能
+
+## License
+MIT
